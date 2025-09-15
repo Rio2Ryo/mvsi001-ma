@@ -89,7 +89,7 @@ export default function HeroSection() {
           <div className="fv-top-inner">
             <div className="fv-logo">
               <Image
-                src="/MV_LOGO.png"
+                src=".../MV_LOGO.png"
                 alt={altLogo}
                 width={250}
                 height={110}
