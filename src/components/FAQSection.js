@@ -1,100 +1,191 @@
 "use client";
-
-import React from "react";
+import { useEffect, useState } from "react";
 import { useI18n } from "../lib/i18n";
 
 export default function FAQSection() {
-  const { t } = useI18n();
-  const tx = (k, fb) => {
-    const v = t ? t(k) : undefined;
-    return v && v !== k ? v : fb;
-  };
+  const [isVisible, setIsVisible] = useState(false);
+  useEffect(() => setIsVisible(true), []);
 
-  const faqs = [
-    {
-      q: tx("faq.items.0.q", "敏感肌でも使えますか？"),
-      a: tx(
-        "faq.items.0.a",
-        "はい、医薬部外品原料規格をクリアした安全な処方です。敏感肌の方でも安心してお使いいただけます。"
-      ),
-    },
-    {
-      q: tx("faq.items.1.q", "いつ使えばいいですか？"),
-      a: tx(
-        "faq.items.1.a",
-        "スキンケアの後、メイクの仕上げまで、どのタイミングでもお使いいただけます。下地の上からでも、ファンデーションの後でも、お好みのタイミングでご使用ください。"
-      ),
-    },
-    {
-      q: tx("faq.items.2.q", "どのくらい持ちますか？"),
-      a: tx(
-        "faq.items.2.a",
-        "1日1回の使用で、500mgは約30日、2,000mgは約60日、5,000mgは約150日ご使用いただけます。"
-      ),
-    },
-  ];
+  const { t } = useI18n();
+  const tr = (key) => t(key) ?? ""; // フォールバック無し（未登録は空に）
+
+  const styles = { hr: { background: "#cfcfcf", height: 1, width: "100%" } };
+
+  // 質問数：必要数に応じて増減可（辞書キーは faq.q1/faq.a1 ...）
+  const qaIndexes = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+
+  const title = tr("faq.title");       // "FAQ" など
+  const subtitle = tr("faq.subtitle"); // "よくあるご質問" など
 
   return (
     <>
-      <section style={styles.section}>
-        <div style={styles.container}>
-          <div style={styles.inner}>
-            <div style={styles.header}>
-              <p style={styles.label}>{tx("faq.label", "よくあるご質問")}</p>
-              <h2 style={styles.title}>{tx("faq.title", "よくあるご質問")}</h2>
-              <div style={styles.separator} />
-            </div>
+      <section id="faq" className={`faq ${isVisible ? "is-visible" : ""}`}>
+        <div className="container">
+          <h2 className="faq-title ja-serif">{title}</h2>
+          <p className="faq-sub">{subtitle}</p>
+          <div className="faq-rule" style={styles.hr} />
 
-            <div style={styles.faqList}>
-              {faqs.map((faq, index) => (
-                <div key={index} style={styles.faqItem}>
-                  <h3 className="faq-question" style={styles.question}>
-                    Q. {faq.q}
-                  </h3>
-                  <p className="faq-answer" style={styles.answer}>
-                    A. {faq.a}
-                  </p>
-                </div>
-              ))}
-            </div>
+          <div className="faq-body">
+            <dl className="faq-list">
+              {qaIndexes.map((i) => {
+                const q = tr(`faq.q${i}`);
+                const a = tr(`faq.a${i}`);
+                if (!q && !a) return null; // 未定義はスキップ
+                return (
+                  <div className="faq-item" key={i}>
+                    <dt>{q}</dt>
+                    <dd>
+                      {(a || "").split("\n").map((line, idx) => (
+                        <span key={idx}>
+                          {line}
+                          <br />
+                        </span>
+                      ))}
+                    </dd>
+                  </div>
+                );
+              })}
+            </dl>
           </div>
         </div>
       </section>
 
       <style jsx>{`
-        @media (min-width: 768px) {
-          h2 {
-            font-size: 2.25rem !important;
-            margin-bottom: 2rem !important;
+        /* ===== Base ===== */
+        .faq {
+          background: #ffffff;
+          color: #3a3a3a;
+          padding: 32px 16px 80px;
+        }
+        .is-visible {
+          animation: fadeInUp 0.8s ease-out both;
+        }
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translate3d(0, 8px, 0);
           }
-          .faq-question {
-            font-size: 1.125rem !important;
-            margin-bottom: 0.75rem !important;
+          to {
+            opacity: 1;
+            transform: translateZ(0);
           }
-          .faq-answer {
-            font-size: 1rem !important;
+        }
+        .container {
+          max-width: 980px;
+          margin: 0 auto;
+        }
+        .ja-serif {
+          font-family: "Yu Mincho", "Hiragino Mincho ProN", "Noto Serif JP",
+            "Hiragino Kaku Gothic ProN", serif;
+        }
+
+        /* ===== Header ===== */
+        .faq-rule {
+          max-width: 860px;
+          margin: 0 auto 12px;
+        }
+        .faq-title {
+          text-align: center;
+          font-size: 32px;
+          letter-spacing: 0.12em;
+          color: #444;
+          margin: 6px 0 4px;
+          font-weight: 600;
+        }
+        .faq-sub {
+          text-align: center;
+          color: #777;
+          font-size: 18px;
+          letter-spacing: 0.14em;
+          margin: 0 0 18px;
+        }
+
+        /* ===== Body ===== */
+        .faq-body {
+          max-width: 860px;
+          margin: 0 auto;
+        }
+        .faq-list {
+          margin: 0;
+          padding: 0;
+        }
+        .faq-item {
+          margin: 18px 0 26px;
+        }
+
+        /* Q */
+        .faq-item dt {
+          position: relative;
+          margin: 0 0 8px;
+          padding-left: 2.1em;
+          font-size: 23.5px;
+          line-height: 1.4;
+          font-weight: 700;
+          letter-spacing: 0.06em;
+          color: #3f3f3f;
+        }
+        .faq-item dt::before {
+          content: "Q.";
+          position: absolute;
+          left: 0;
+          top: 0;
+          color: #333;
+          font-weight: 700;
+          letter-spacing: 0.06em;
+        }
+
+        /* A */
+        .faq-item dd {
+          position: relative;
+          margin: 0;
+          padding-left: 2.1em;
+          font-size: 23.5px;
+          line-height: 1.4;
+          letter-spacing: 0.04em;
+          color: #555;
+        }
+        .faq-item dd::before {
+          content: "A.";
+          position: absolute;
+          left: 0;
+          top: 0;
+          color: #333;
+          font-weight: 700;
+          letter-spacing: 0.06em;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 640px) {
+        .faq-body {
+          width: 90%;
+          margin: 0 auto;
+        }
+          .faq-rule {
+            max-width: 90%;
+            margin:0 auto;
+            margin-bottom: 10px;
+          }
+          .faq-title {
+            font-size: 20px;
+            margin-bottom: 2px;
+          }
+          .faq-sub {
+            font-size: 12px;
+            margin-bottom: 16px;
+          }
+          .faq-body {
+            max-width: 100%;
+          }
+          .faq-item dt {
+            font-size: 15px;
+            line-height: 1.9;
+          }
+          .faq-item dd {
+            font-size: 14.5px;
+            line-height: 1.9;
           }
         }
       `}</style>
     </>
   );
 }
-
-const styles = {
-  section: { padding: "5rem 1rem", background: "#ffffff" },
-  container: { maxWidth: "1200px", margin: "0 auto" },
-  inner: { maxWidth: "900px", margin: "0 auto" },
-  header: { textAlign: "center", marginBottom: "4rem" },
-  label: {
-    fontSize: "0.875rem",
-    color: "#b8860b",
-    marginBottom: "1rem",
-    letterSpacing: "0.1em",
-  },
-  title: { fontSize: "1.75rem", fontWeight: "bold", color: "#1f2937", marginBottom: "1.5rem" },
-  separator: { width: "80px", height: "4px", backgroundColor: "#b8860b", margin: "0 auto" },
-  faqList: { display: "flex", flexDirection: "column", gap: "2rem" },
-  faqItem: { borderBottom: "1px solid #e5e7eb", paddingBottom: "1.5rem" },
-  question: { fontSize: "1rem", fontWeight: "bold", color: "#b8860b", marginBottom: "0.5rem" },
-  answer: { fontSize: "0.875rem", color: "#4b5563", lineHeight: 1.7 },
-};

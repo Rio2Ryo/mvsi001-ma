@@ -1,503 +1,294 @@
 "use client";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useI18n } from "../lib/i18n";
 
-export default function ProductSection() {
-  const [selectedSize, setSelectedSize] = useState("2g");
+export default function EffectsSection() {
+  const [isVisible, setIsVisible] = useState(false);
+  useEffect(() => setIsVisible(true), []);
+
   const { t } = useI18n();
-  const tx = (k, fb) => {
-    const v = t ? t(k) : undefined;
-    return v && v !== k ? v : fb;
-  };
+  const tr = (key) => t(key) ?? "";
 
-  // （※ products は現状UIで未使用なのでそのまま保持。必要になったら tx で差し替えてね）
-  const products = [
-    {
-      size: "1g",
-      title: tx("product.cards.0.title", "お試しサイズ"),
-      description: tx("product.cards.0.description", "1g - 約30日分"),
-      features: [
-        tx("product.cards.0.features.0", "マザーベジタブル 1g配合"),
-        tx("product.cards.0.features.1", "約30日分"),
-        tx("product.cards.0.features.2", "携帯に便利なコンパクトケース")
-      ],
-      originalPrice: tx("product.cards.0.originalPrice", "¥3,300"),
-      price: tx("product.cards.0.price", "¥2,200"),
-      popular: false
-    },
-    {
-      size: "2g",
-      title: tx("product.cards.1.title", "スタンダードサイズ"),
-      description: tx("product.cards.1.description", "2g - 約60日分"),
-      features: [
-        tx("product.cards.1.features.0", "マザーベジタブル 2g配合"),
-        tx("product.cards.1.features.1", "約60日分"),
-        tx("product.cards.1.features.2", "携帯に便利なコンパクトケース")
-      ],
-      originalPrice: tx("product.cards.1.originalPrice", "¥5,500"),
-      price: tx("product.cards.1.price", "¥3,300"),
-      popular: true
-    },
-    {
-      size: "5g",
-      title: tx("product.cards.2.title", "お得な大容量"),
-      description: tx("product.cards.2.description", "5g - 約150日分"),
-      features: [
-        tx("product.cards.2.features.0", "マザーベジタブル 5g配合"),
-        tx("product.cards.2.features.1", "約150日分"),
-        tx("product.cards.2.features.2", "特別な大容量ラグジュアリーケース")
-      ],
-      originalPrice: tx("product.cards.2.originalPrice", "¥8,800"),
-      price: tx("product.cards.2.price", "¥5,500"),
-      popular: false
-    }
-  ];
+  const styles = { hr: { background: "#d9d9d9", height: 1, width: "100%" } };
 
-  const ingredient = {
-    heading: tx("product.labels.mainIngredient", "主成分"),
-    name: tx("product.ingredient.name", "マザーベジタブル"),
-    description: tx("product.ingredient.description", "35億年前に誕生した地球最初の生命体"),
-    details: tx("product.ingredient.details", "独自の吸着機能により、24時間美しさを保ちます。")
-  };
+  const title   = tr("effects.title");
+  const sub     = tr("effects.subtitle");
 
-  const effects = [
-    {
-      title: tx("product.effects.0.title", "化粧崩れ防止効果"),
-      description: tx("product.effects.0.description", "汗やテカリをしっかり吸着し、崩れを防ぎます")
-    },
-    {
-      title: tx("product.effects.1.title", "透明感のある陶器肌"),
-      description: tx("product.effects.1.description", "細かい粒子が肌を整え、美しい陶器肌を再現")
-    },
-    {
-      title: tx("product.effects.2.title", "トーンアップ効果"),
-      description: tx("product.effects.2.description", "肌を明るく見せ、自然な輝きを与えます")
-    },
-    {
-      title: tx("product.effects.3.title", "スキンケア効果"),
-      description: tx("product.effects.3.description", "肌を保護しながら美しく整えます")
-    }
-  ];
+  const gradeTitle = tr("effects.grade.title");
+  const gradeRows = [0, 1, 2].map((i) => ({
+    country: tr(`effects.grade.rows.${i}.country`),
+    desc:    tr(`effects.grade.rows.${i}.desc`),
+  }));
+
+  const otherTitle = tr("effects.other.title");
+  const otherRows = [0, 1, 2].map((i) => ({
+    name: tr(`effects.other.rows.${i}.name`),
+    desc: tr(`effects.other.rows.${i}.desc`),
+  }));
+
+  const collabTitle = tr("effects.collab.title");
+  const collabCountries = [0, 1, 2, 3].map((i) => ({
+    name: tr(`effects.collab.countries.${i}.name`),
+    body: tr(`effects.collab.countries.${i}.body`),
+  }));
+  const footnote = tr("effects.collab.footnote");
+
+  const altGmo         = tr("effects.alt.gmo");
+  const altFisheries   = tr("effects.alt.fisheries");
+  const altShizuoka    = tr("effects.alt.shizuoka");
+  const altKawazu      = tr("effects.alt.kawazu");
+  const altMalaysiaUni = tr("effects.alt.malaysiaUni");
+  const altGreenhouse  = tr("effects.alt.greenhouse");
 
   return (
-    <section
-      className="sec"
-      style={{ padding: "0.01rem 0.1rem 2.6rem 0.01rem", backgroundColor: "#f9fafb" }}
-    >
-      <div className="haba" style={{ maxWidth: "1280px", margin: "120px auto 0 auto", padding: "0 1rem" }}>
+    <>
+      <section className={`mv-certs ${isVisible ? "is-visible" : ""}`}>
+        <div className="container">
+          {/* タイトル */}
+          <h2 className="mv-certs-title ja-serif">{title}</h2>
+          <p className="mv-certs-sub ja-serif">{sub}</p>
 
-        {/* 成分・効果 */}
-        <div style={{ marginTop: "2rem" }}>
-          <h3
-            style={{
-              fontSize: "1.5rem",
-              fontWeight: 300,
-              marginBottom: "3rem",
-              textAlign: "center",
-              color: "#2d2d2d",
-              letterSpacing: "0.05em"
-            }}
-          >
-            {tx("product.labels.section", "成分・効果")}
-          </h3>
-
-          <div style={{ maxWidth: "800px", margin: "0 auto 4rem" }}>
-            <div
-              style={{
-                background: "linear-gradient(to bottom right, #ffffff, #f8f8f8)",
-                borderRadius: "1.5rem",
-                padding: "2rem",
-                border: "1px solid rgba(184, 134, 11, 0.3)",
-                boxShadow: "0 10px 30px rgba(0,0,0,0.05)"
-              }}
-            >
-              <div style={{ textAlign: "center" }}>
-                <div
-                  style={{
-                    width: "96px",
-                    height: "96px",
-                    borderRadius: "50%",
-                    background:
-                      "linear-gradient(to bottom right, rgba(184,134,11,0.2), rgba(212,196,176,0.2))",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    margin: "0 auto 1.5rem"
-                  }}
-                >
-                  <svg viewBox="0 0 24 24" style={{ width: "48px", height: "48px", color: "#b8860b" }}>
-                    <path
-                      fill="currentColor"
-                      d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z"
-                    />
-                  </svg>
-                </div>
-                <h4
-                  style={{
-                    fontSize: "1.5rem",
-                    fontWeight: 300,
-                    color: "#b8860b",
-                    marginBottom: "0.3rem"
-                  }}
-                >
-                  {ingredient.heading}
-                </h4>
-                <p
-                  style={{
-                    fontSize: "1.4rem",
-                    fontWeight: 500,
-                    color: "#2d2d2d",
-                    marginBottom: "0.5rem"
-                  }}
-                >
-                  {ingredient.name}
-                </p>
-                <p style={{ fontSize: "1rem", color: "#555", marginBottom: "1rem" }}>
-                  {ingredient.description}
-                </p>
-                <p
-                  style={{
-                    fontSize: "0.875rem",
-                    color: "#777",
-                    lineHeight: "1.7",
-                    maxWidth: "640px",
-                    margin: "0 auto"
-                  }}
-                >
-                  {ingredient.details}
-                </p>
-              </div>
-            </div>
+          {/* Grades */}
+          <div className="mv-grade-block">
+            <h3 className="mv-subtitle">{gradeTitle}</h3>
+            <ul className="mv-grade-list mv-grade-list--grades">
+              {gradeRows.map((r, i) =>
+                r.country || r.desc ? (
+                  <li key={`gr-${i}`}>
+                    <span className="country">{r.country}</span>
+                    <span className="desc">{r.desc}</span>
+                  </li>
+                ) : null
+              )}
+            </ul>
           </div>
 
-          {/* 期待できる効果カード */}
-          <div
-            style={{
-              backgroundColor: "#fff",
-              borderRadius: "1.25rem",
-              padding: "2rem",
-              maxWidth: "1224px",
-              margin: "0 auto",
-              boxShadow: "0 6px 16px rgba(0,0,0,0.08)"
-            }}
-          >
-            <h4
-              style={{
-                fontSize: "1.2rem",
-                fontWeight: 300,
-                color: "#2d2d2d",
-                marginBottom: "1.5rem",
-                textAlign: "center"
-              }}
-            >
-              {tx("product.labels.expectedEffects", "期待できる効果")}
-            </h4>
-
-            <div
-              className="effects-grid"
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "1.5rem"
-              }}
-            >
-              {effects.map((effect, index) => (
-                <div
-                  key={index}
-                  style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    padding: "0.3rem",
-                    borderRadius: "1rem",
-                    transition: "background-color 0.3s ease"
-                  }}
-                >
-                  <span
-                    style={{
-                      width: "32px",
-                      height: "32px",
-                      background:
-                        "linear-gradient(to bottom right, rgba(184,134,11,0.2), rgba(212,196,176,0.2))",
-                      borderRadius: "50%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginRight: "1rem"
-                    }}
-                  >
-                    <svg viewBox="0 0 24 24" style={{ width: "20px", height: "20px", color: "#b8860b" }}>
-                      <path
-                        fill="currentColor"
-                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"
-                      />
-                    </svg>
-                  </span>
-                  <div>
-                    <p
-                      style={{
-                        fontSize: "1rem",
-                        fontWeight: 500,
-                        color: "#b8860b",
-                        marginBottom: "0.25rem"
-                      }}
-                    >
-                      {effect.title}
-                    </p>
-                    <p style={{ fontSize: "0.875rem", color: "#555" }}>{effect.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* 追加ブロック 1 */}
-          <div
-            style={{
-              backgroundColor: "#fff",
-              borderRadius: "1.25rem",
-              padding: "2rem",
-              maxWidth: "1224px",
-              margin: "80px auto 80px auto",
-              boxShadow: "0 6px 16px rgba(0,0,0,0.08)"
-            }}
-          >
-            <h4
-              className="add-title"
-              style={{
-                fontSize: "1.3rem",
-                fontWeight: 600,
-                color: "#b8860b",
-                marginBottom: "1.5rem",
-                textAlign: "center"
-              }}
-            >
-              {tx("product.extra1.title", "「顔のテカリを消す」効果は")}<span className="sp" />
-              {tx("product.extra1.titleTail", "マザベジ形状ならでは")}
-            </h4>
-
-            <div
-              className="add-flex"
-              style={{
-                display: "flex",
-                gap: "20px",
-                justifyContent: "space-between",
-                marginTop: "2rem"
-              }}
-            >
-              {/* 左 */}
-              <div className="one-b">
-                <p
-                  className="add-title"
-                  style={{ fontSize: "1.2rem", fontWeight: 600, color: "black", marginBottom: "1", textAlign: "center" }}
-                >
-                  {tx("product.extra1.left.title", "皮脂の油分がある状態")}
-                </p>
-                <img
-                  className="spwidth"
-                  src="/doc1.jpg"
-                  alt="doc1"
-                  loading="lazy"
-                  style={{ width: "98%", height: "auto", borderRadius: "0.75rem" }}
-                />
-                <div style={{ textAlign: "center" }}>
-                  <img
-                    className="spwidth"
-                    src="/doc1-a.jpg"
-                    alt="doc1-a"
-                    loading="lazy"
-                    style={{ width: "86%", height: "auto", borderRadius: "0.75rem" }}
-                  />
-                </div>
-                <div className="spwidth" style={{ width: "86%", margin: "30px auto 0 auto" }}>
-                  <p
-                    className="add-discription"
-                    style={{ fontSize: "1rem", fontWeight: 400, color: "black", marginBottom: "1", textAlign: "left" }}
-                  >
-                    {tx("product.extra1.left.p1", "肌のテカリの原因は、皮脂の油分が同じ形状であり、同じ方向に光が跳ね返るため")}
-                  </p>
-                  <p
-                    className="add-discription2"
-                    style={{ marginTop: "30px", fontSize: "1rem", fontWeight: 400, color: "black", marginBottom: "1", textAlign: "left" }}
-                  >
-                    <span style={{ fontWeight: "600" }}>{tx("product.extra1.left.riskLabel", "【ケミカルシリカを塗るリスク】")}</span>
-                    <br />
-                    {tx("product.extra1.left.p2", "薬品残りがあり肌のアレルギーリスクがあるほか、形状も同じなので肌に塗るとテカリが出る")}
-                  </p>
-                </div>
-              </div>
-
-              {/* 右 */}
-              <div className="one-b">
-                <p
-                  className="add-title"
-                  style={{ fontSize: "1.2rem", fontWeight: 600, color: "black", marginBottom: "1", textAlign: "center" }}
-                >
-                  {tx("product.extra1.right.title", "マザベジシリカ塗布後")}
-                </p>
-                <img
-                  className="spwidth"
-                  src="/doc2.jpg"
-                  alt="doc2"
-                  loading="lazy"
-                  style={{ width: "98%", height: "auto", borderRadius: "0.75rem" }}
-                />
-                <div style={{ textAlign: "center" }}>
-                  <img
-                    className="spwidth"
-                    src="/doc2-b.jpg"
-                    alt="doc2-b"
-                    loading="lazy"
-                    style={{ width: "86%", height: "auto", borderRadius: "0.75rem" }}
-                  />
-                </div>
-                <div className="spwidth" style={{ width: "86%", margin: "30px auto 0 auto" }}>
-                  <p
-                    className="add-discription"
-                    style={{ fontSize: "1rem", fontWeight: 400, color: "black", marginBottom: "1", textAlign: "left" }}
-                  >
-                    {tx("product.extra1.right.p1", "マザベジシリカは、天然の植物の形のためパウダーすべてに個性があり、微かな個性差がある。そのため、光の跳ね返りもランダムに")}
-                  </p>
-                  <p
-                    className="add-discription2"
-                    style={{ marginTop: "30px", fontSize: "1rem", fontWeight: 400, color: "black", marginBottom: "1", textAlign: "left" }}
-                  >
-                    <span style={{ fontWeight: "600" }}>{tx("product.extra1.right.benefitLabel", "【マザベジシリカを塗るメリット】")}</span>
-                    <br />
-                    {tx("product.extra1.right.p2", "皮脂の油分を吸い取り、空気中の水分もキャッチ。潤いもあるのにテカらず、抗酸化作用で肌も清潔に")}
-                  </p>
-                </div>
-              </div>
+          {/* Other Certifications（左テキスト／右ロゴ） */}
+          <div className="mv-other-cert">
+            <div className="mv-other-left">
+              <h3 className="mv-subtitle">{otherTitle}</h3>
+              <ul className="mv-grade-list mv-grade-list--other">
+                {otherRows.map((r, i) =>
+                  r.name || r.desc ? (
+                    <li key={`ot-${i}`}>
+                      <span className="country">{r.name}</span>
+                      <span className="desc">{r.desc}</span>
+                    </li>
+                  ) : null
+                )}
+              </ul>
             </div>
 
-            <p
-              className="add-title"
-              style={{ fontSize: "1.5rem", fontWeight: 600, color: "black", marginTop: "30px", marginBottom: "1", textAlign: "center" }}
-            >
-              {tx("product.extra1.footer", "さっと10秒塗るだけで清潔感をゲット→デートや商談前の必須アイテムに")}
-            </p>
-          </div>
-
-          {/* 追加ブロック 2 */}
-          <div
-            className="spbottom"
-            style={{
-              backgroundColor: "#fff",
-              borderRadius: "1.25rem",
-              padding: "2rem",
-              maxWidth: "1224px",
-              margin: "80px auto 80px auto",
-              boxShadow: "0 6px 16px rgba(0,0,0,0.08)"
-            }}
-          >
-            <h4
-              className="add-title"
-              style={{ fontSize: "1.3rem", fontWeight: 600, color: "#b8860b", marginBottom: "1.5rem", textAlign: "center" }}
-            >
-              {tx("product.extra2.title", "睡眠前の「すっぴん」も")}<span className="sp" />
-              {tx("product.extra2.titleTail", "トーンアップでナチュラルに")}
-            </h4>
-
-            <div
-              className="add-flex"
-              style={{
-                display: "flex",
-                gap: "20px",
-                justifyContent: "space-between",
-                marginTop: "2rem"
-              }}
-            >
-              {/* 左 */}
-              <div>
-                <p
-                  className="add-title"
-                  style={{ fontSize: "1.2rem", fontWeight: 600, color: "black", marginBottom: "1", textAlign: "center" }}
-                >
-                  {tx("product.extra2.left.title", "シワや毛穴がある状態")}
-                </p>
-                <img
-                  src="/doc3.jpg"
-                  alt="doc3"
-                  loading="lazy"
-                  style={{ width: "98%", height: "auto", borderRadius: "0.75rem" }}
-                />
-                <div className="spwidth" style={{ width: "86%", margin: "30px auto 0 auto" }}>
-                  <p
-                    className="add-discription"
-                    style={{ fontSize: "1rem", fontWeight: 400, color: "black", marginBottom: "1", textAlign: "left" }}
-                  >
-                    {tx("product.extra2.left.p1", "寝る前などのすっぴんの際にはどうしてもシワや毛穴が目立ってしまう")}
-                  </p>
-                  <p
-                    className="add-discription2"
-                    style={{ marginTop: "20px", fontSize: "1rem", fontWeight: 400, color: "black", marginBottom: "1", textAlign: "left" }}
-                  >
-                    <span style={{ fontWeight: "600" }}>{tx("product.extra2.left.riskLabel", "【ファンデーションを塗ると割れることも】")}</span>
-                    <br />
-                    {tx("product.extra2.left.p2", "寝る前に使用できないだけでなく、ファンデーションは粘土のようにまとまっているため、乾くと割れる")}
-                  </p>
-                </div>
-              </div>
-
-              {/* 右 */}
-              <div className="one-b">
-                <p
-                  className="add-title"
-                  style={{ fontSize: "1.2rem", fontWeight: 600, color: "black", marginBottom: "1", textAlign: "center" }}
-                >
-                  {tx("product.extra2.right.title", "マザベジシリカ塗布後")}
-                </p>
-                <img
-                  src="/doc4.jpg"
-                  alt="doc4"
-                  loading="lazy"
-                  style={{ width: "98%", height: "auto", borderRadius: "0.75rem" }}
-                />
-                <div className="spwidth" style={{ width: "86%", margin: "30px auto 0 auto" }}>
-                  <p
-                    className="add-discription"
-                    style={{ fontSize: "1rem", fontWeight: 400, color: "black", marginBottom: "1", textAlign: "left" }}
-                  >
-                    {tx("product.extra2.right.p1", "寝る前にも使えるマザベジシリカは、シワや毛穴にも入り込んで目立たせない")}
-                  </p>
-                  <p
-                    className="add-discription2"
-                    style={{ marginTop: "20px", fontSize: "1rem", fontWeight: 400, color: "black", marginBottom: "1", textAlign: "left" }}
-                  >
-                    <span style={{ fontWeight: "600" }}>{tx("product.extra2.right.benefitLabel", "【マザベジシリカを塗るメリット】")}</span>
-                    <br />
-                    {tx("product.extra2.right.p2", "気になるところを隠しながらお肌を清潔に。またシリカは分かれているので「割れ」もない")}
-                  </p>
-                </div>
-              </div>
+            <div className="mv-cert-logos">
+              <Image src="/logo-gmo.png" alt={altGmo || "GMO"} width={410} height={130} />
             </div>
-
-            <p
-              className="add-title"
-              style={{ fontSize: "1.5rem", fontWeight: 600, color: "black", marginTop: "30px", marginBottom: "1", textAlign: "center" }}
-            >
-              {tx("product.extra2.footer", "寝る前だけでなく、化粧のできない")}<span className="sp" />
-              {tx("product.extra2.footerTail", "医療や介護でも活躍。24時間綺麗に")}
-            </p>
           </div>
         </div>
-      </div>
 
+        {/* 連携（左テキスト／右ロゴ群＋画像） */}
+        <div className="mv-collab">
+          <div className="container collab-grid">
+            <div className="mv-collab-text">
+              <h3 className="mv-subtitle">{collabTitle}</h3>
+
+              {collabCountries.map((c, i) =>
+                c.name || c.body ? (
+                  <div className="mv-collab-country" key={`cc-${i}`}>
+                    <h4>{c.name}</h4>
+                    <p>
+                      {(c.body || "").split("\n").map((line, j) => (
+                        <span key={`c${i}-${j}`}>
+                          {line}
+                          <br />
+                        </span>
+                      ))}
+                    </p>
+                  </div>
+                ) : null
+              )}
+            </div>
+
+            <div className="mv-collab-right">
+              <div className="mv-collab-logos">
+                <div className="logo-row">
+                  <Image src="/logo-fisheries.png" alt={altFisheries} width={180} height={88} />
+                  <Image src="/logo-shizuoka.png" alt={altShizuoka} width={200} height={88} />
+                </div>
+                <div className="logo-row">
+                  <Image src="/logo-kawazu.png" alt={altKawazu} width={208} height={88} />
+                  <Image src="/logo-malaysia-univ.png" alt={altMalaysiaUni} width={186} height={88} />
+                </div>
+              </div>
+
+              <div className="mv-collab-img">
+                <Image
+                  src="/mv-greenhouse.jpg"
+                  alt={altGreenhouse}
+                  fill
+                  sizes="(max-width: 1024px) 50vw, 520px"
+                  style={{ objectFit: "cover" }}
+                  priority
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <p className="mv-footnote">{footnote}</p>
+      </section>
+
+      {/* styled-jsx */}
       <style jsx>{`
-        .sp { display: none; }
-        @media (max-width: 768px) {
-          .haba { margin: 60px auto 0 auto !important; }
-          h3 { font-size: 1.36rem !important; }
-          :global(.effects-grid) { grid-template-columns: 1fr !important; }
-          .add-title { font-size: 1rem !important; }
-          .add-flex { display: block !important; }
-          .sp { display: block; }
-          .one-b { margin-top: 40px !important; }
-          .sec { padding-bottom: 1px !important; }
-          .spwidth { width: 100% !important; }
-          .spbottom { margin: 70px auto 30px auto !important; }
+        .mv-certs { background: #fff; color: #3a3a3a; padding: 36px 16px 80px; }
+        h4 { font-weight: bold; }
+        .is-visible { animation: fadeInUp .7s ease-out both; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translate3d(0,8px,0); } to { opacity: 1; transform: translateZ(0); } }
+
+        /* ★ 横幅を拡張して右列を伸ばす */
+        .container { max-width: 1100px; margin: 0 auto; }
+
+        .ja-serif { font-family: "Yu Mincho","Hiragino Mincho ProN","Noto Serif JP","Hiragino Kaku Gothic ProN",serif; }
+
+        .mv-certs-title {
+          text-align: center; font-size: 38px; font-weight: 600;
+          letter-spacing: .12em; margin: 6px 0 10px; color: #444;
         }
+        .mv-certs-sub { text-align: center; color: #666; font-size: 24px; letter-spacing: .1em; margin-bottom: 24px; }
+
+        .mv-subtitle { font-size: 30px; font-weight: 700; letter-spacing: .14em; color: #444; margin: 56px 0 10px; }
+
+        /* ===== 2列レイアウト ===== */
+        .mv-grade-list { list-style: none; padding: 0; margin: 0; }
+        /* 上段（Grades）：左列 260px */
+        .mv-grade-list--grades li {
+          display: grid; grid-template-columns: 260px 1fr; align-items: baseline; gap: 16px;
+          font-size: 22px; line-height: 1.6; color: #555;
+        }
+        /* 下段（Other）：左列 360px（長文用） */
+        .mv-grade-list--other li {
+          display: grid; grid-template-columns: 360px 1fr; align-items: baseline; gap: 16px;
+          font-size: 22px; line-height: 1.6; color: #555;
+        }
+
+        /* ★ 左列：太字 + 右寄せ + 折り返し禁止 */
+        .mv-grade-list .country {
+          font-weight: 700;
+          text-align: right;
+          white-space: nowrap;
+          letter-spacing: .06em;   /* 広がり過ぎない程度に */
+          color: #3f3f3f;
+        }
+        /* 右列は自然に右端まで伸ばす */
+        .mv-grade-list .desc { letter-spacing: .01em; word-break: keep-all; }
+
+        /* Other Certifications 右ロゴ */
+        .mv-other-cert { display: grid; grid-template-columns: 1fr 360px; gap: 28px; align-items: start; margin-top: 14px; margin-bottom: 24px; }
+        .mv-cert-logos { display: flex; justify-content: flex-end; align-items: center; gap: 28px; flex-wrap: wrap; padding-top: 22px; }
+
+        /* 連携ブロック */
+        .mv-collab { margin-top: 24px; padding: 8px 0 0; }
+        .collab-grid { display: grid; grid-template-columns: 1fr 420px; gap: 36px; align-items: start; }
+        .mv-collab-text h4 { font-size: 22px; margin: 18px 0 6px; color: #4a4a4a; letter-spacing: .1em; }
+        .mv-collab-text p { margin: 0 0 10px; color: #555; font-size: 22px; line-height: 1.5; letter-spacing: .04em; }
+        .mv-footnote { font-size: 16px; color: #888; letter-spacing: .04em; max-width: 1100px; margin: 10px auto 0; }
+
+        .mv-collab-right { display: grid; grid-template-rows: auto 1fr; gap: 18px; }
+        .mv-collab-logos { display: grid; gap: 14px; }
+        .logo-row { display: flex; align-items: center; gap: 22px; justify-content: flex-start; flex-wrap: wrap; }
+
+        .mv-collab-img { position: relative; width: 100%; height: 380px; overflow: hidden; background: #f0f2f4; }
+
+        /* レスポンシブ */
+        @media (max-width: 1100px) {
+          .mv-grade-list--grades li { grid-template-columns: 220px 1fr; }
+          .mv-grade-list--other  li { grid-template-columns: 300px 1fr; }
+          .mv-other-cert { grid-template-columns: 1fr; }
+          .mv-cert-logos { justify-content: center; padding-top: 8px; }
+          .collab-grid { grid-template-columns: 1fr; }
+          .mv-collab-right { grid-template-rows: auto 240px; }
+          .mv-collab-img { height: 240px; }
+        }
+        @media (max-width: 560px) {
+          .mv-certs-title { font-size: 22px; }
+          .mv-subtitle { font-size: 20px; }
+          .mv-grade-list--grades li,
+          .mv-grade-list--other li {
+            grid-template-columns: 1fr; gap: 6px; line-height: 1.9;
+          }
+          .mv-grade-list .country { text-align: left; white-space: normal; }
+          .mv-certs-sub { font-size: 14px; white-space:pre-wrap; }
+        }
+        /* ▼スマホ専用：⑤のレイアウトに揃える */
+@media (max-width: 560px) {
+  .mv-certs{ max-width:90%; margin:0 auto; padding:26px 12px 5px; }
+
+  .mv-certs-title{ font-size:17px; letter-spacing:.08em; margin:0 0 6px; }
+  .mv-certs-sub{   font-size:13px; letter-spacing:.06em; margin:0 0 18px; white-space:pre-wrap; }
+
+  .mv-subtitle{ font-size:15px; letter-spacing:.08em; margin:5px 0 10px; }
+
+  /* ←肝：スマホでも“国名｜説明”の2カラムを維持して1行風に見せる */
+  .mv-grade-list--grades li,
+  .mv-grade-list--other  li{
+    display:grid;
+    
+    column-gap:10px;
+    row-gap:0;
+    align-items:start;
+    font-size:0.9rem;
+    line-height:1.85;
+    margin:4px 0;
+    
+  }
+  .mv-grade-list .country{
+    font-weight:700;
+    text-align:left;
+    white-space:pre-wrap;               /* 国名は改行させない */
+    letter-spacing:.04em;
+    color:#333;
+  }
+  .mv-grade-list .desc{
+    letter-spacing:.02em;
+    word-break:keep-all;              /* 語を途中で折らない */
+  }
+
+  /* “その他の認証”ロゴは小さめ中央寄せ */
+  .mv-other-cert{ grid-template-columns:1fr; gap:8px; }
+  .mv-cert-logos{ justify-content:center; gap:12px; padding-top:4px; }
+  .mv-cert-logos :global(img){ width:90%!important; height:auto; }
+
+  /* 連携テキスト：自然折返し（強制改行を無効化） */
+  .mv-collab-text h4{ font-size:16px; margin:14px 0 4px; }
+  .mv-collab-text p{ font-size:14px; line-height:1.9; letter-spacing:.02em; }
+  .mv-collab-text p br{ display:none; }
+  .mv-collab-text p span{ display:inline; }
+
+  /* 連携ロゴ：2列均等 */
+  .mv-collab-logos{ gap:10px; }
+  .logo-row{ gap:10px; justify-content:center; }
+  .logo-row :global(img){ width:44%; height:auto; }
+
+  /* 温室写真を小さめカード風に */
+  .mv-collab-right{ grid-template-rows:auto 180px; }
+  .mv-collab-img{ height:180px; border-radius:4px; }
+
+  .mv-footnote{ font-size:12px; line-height:1.7; max-width:92%; margin:10px auto 0; }
+}
+
+/* さらに狭い端末の微調整 */
+@media (max-width: 380px){
+  .mv-grade-list--grades li,
+  .mv-grade-list--other li{
+    
+    font-size:0.9rem;
+  }
+  .mv-cert-logos :global(img){ width:84px; }
+  .logo-row :global(img){ width:46%; }
+  .mv-collab-right{ grid-template-rows:auto 160px; }
+  .mv-collab-img{ height:160px; }
+}
+
       `}</style>
-    </section>
+    </>
   );
 }

@@ -235,14 +235,14 @@ export default function Home() {
           )}
         </div> */}
         <HeroSection />
-        <ConceptSection />
-        <FeatureSection />
-        <Effects />
-        <TestimonialSection />
-        <ProductSection />
-        <GuaranteeSection />
-        <FAQSection />
-        <Footer />
+         <ConceptSection />
+         <TestimonialSection />
+         <FeatureSection />
+         <Effects />
+         <ProductSection />
+         <GuaranteeSection />
+         <FAQSection />
+         <Footer />
       </main>
     </>
   );
